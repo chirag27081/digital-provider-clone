@@ -5,13 +5,13 @@ const StatsSection = () => {
   const stats = [
     {
       icon: Package,
-      number: '7571',
+      number: '0',
       label: 'Total services',
       color: 'text-blue-600'
     },
     {
       icon: ShoppingCart,
-      number: '866695',
+      number: '0',
       label: 'Total orders',
       color: 'text-green-600'
     }
