@@ -17,8 +17,8 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 267 91% 66%;
+    --primary-foreground: 0 0% 100%;
 
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -26,17 +26,25 @@ All colors MUST be HSL.
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 325 100% 50%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --ring: 267 91% 66%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
+
+    /* SMM Panel Custom Colors */
+    --gradient-start: 267 91% 66%;
+    --gradient-end: 325 100% 50%;
+    --hero-gradient: linear-gradient(135deg, hsl(var(--gradient-start)), hsl(var(--gradient-end)));
+    --card-shadow: 0 10px 30px -10px hsl(var(--primary) / 0.3);
+    --glow-effect: 0 0 40px hsl(var(--primary) / 0.4);
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     --sidebar-background: 0 0% 98%;
 
