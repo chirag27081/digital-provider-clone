@@ -54,7 +54,7 @@ const Footer = () => {
           <div className="flex flex-col md:flex-row gap-4 max-w-md mx-auto">
             <Input 
               type="email" 
-              placeholder="Enter your email address"
+              placeholder="chiraggautam332@gmail.com"
               className="bg-white/90 border-0 flex-1"
             />
             <Button className="bg-white text-primary hover:bg-gray-100 font-medium px-6">
@@ -84,7 +84,7 @@ const Footer = () => {
               <div className="space-y-3">
                 <div className="flex items-center space-x-3 text-gray-400">
                   <MapPin size={18} className="text-primary flex-shrink-0" />
-                  <span>Your City, Your State, Your Country</span>
+                  <span>Your meerut, uttar pradesh, india</span>
                 </div>
                 <div className="flex items-center space-x-3 text-gray-400">
                   <Phone size={18} className="text-primary flex-shrink-0" />
@@ -92,7 +92,7 @@ const Footer = () => {
                 </div>
                 <div className="flex items-center space-x-3 text-gray-400">
                   <Mail size={18} className="text-primary flex-shrink-0" />
-                  <span>your.email@domain.com</span>
+                  <span>panthet6969@gmail.com</span>
                 </div>
               </div>
 
