@@ -14,7 +14,143 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      orders: {
+        Row: {
+          completed_count: number | null
+          created_at: string
+          id: string
+          quantity: number
+          service_id: string
+          start_count: number | null
+          status: string | null
+          target_url: string
+          total_cost: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_count?: number | null
+          created_at?: string
+          id?: string
+          quantity: number
+          service_id: string
+          start_count?: number | null
+          status?: string | null
+          target_url: string
+          total_cost: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_count?: number | null
+          created_at?: string
+          id?: string
+          quantity?: number
+          service_id?: string
+          start_count?: number | null
+          status?: string | null
+          target_url?: string
+          total_cost?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          balance: number | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          status: string | null
+          total_orders: number | null
+          updated_at: string
+          user_id: string
+          username: string | null
+        }
+        Insert: {
+          balance?: number | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          status?: string | null
+          total_orders?: number | null
+          updated_at?: string
+          user_id: string
+          username?: string | null
+        }
+        Update: {
+          balance?: number | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          status?: string | null
+          total_orders?: number | null
+          updated_at?: string
+          user_id?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
+      services: {
+        Row: {
+          category: string
+          created_at: string
+          delivery_time: string | null
+          description: string | null
+          features: string[] | null
+          id: string
+          max_quantity: number | null
+          min_quantity: number | null
+          name: string
+          platform: string
+          price_per_1000: number
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          delivery_time?: string | null
+          description?: string | null
+          features?: string[] | null
+          id?: string
+          max_quantity?: number | null
+          min_quantity?: number | null
+          name: string
+          platform: string
+          price_per_1000: number
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          delivery_time?: string | null
+          description?: string | null
+          features?: string[] | null
+          id?: string
+          max_quantity?: number | null
+          min_quantity?: number | null
+          name?: string
+          platform?: string
+          price_per_1000?: number
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
