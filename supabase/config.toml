@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.get-user-profile]
 verify_jwt = false
+
+[functions.smm-provider]
+verify_jwt = false
