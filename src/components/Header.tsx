@@ -21,7 +21,7 @@ const Header = () => {
         <nav className="flex items-center justify-between">
           {/* Logo */}
           <div className="text-2xl font-bold text-white tracking-wider">
-            AAPKAPROVIDER.COM
+            ULTIMATESMM.COM
           </div>
 
           {/* Desktop Navigation */}

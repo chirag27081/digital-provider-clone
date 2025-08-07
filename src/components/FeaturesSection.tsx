@@ -47,12 +47,12 @@ const FeaturesSection = () => {
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
             🚀 <span className="text-primary">Why to Choose</span>{' '}
-            <span className="text-accent">aapkaprovider.com</span> –{' '}
+            <span className="text-accent">ultimatesmm.com</span> –{' '}
             <span className="text-gray-800">Your Trusted SMM Panel Partner</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
             In the world of digital marketing, speed, reliability, and trust matter. 
-            That's why <strong>aapkaprovider.com</strong> is the go-to choice for thousands of resellers and marketers across India.
+            That's why <strong>ultimatesmm.com</strong> is the go-to choice for thousands of resellers and marketers across India.
           </p>
         </div>
 
