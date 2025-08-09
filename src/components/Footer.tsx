@@ -73,7 +73,7 @@ const Footer = () => {
             <div className="space-y-6">
               <div>
                 <h3 className="text-2xl font-bold text-white mb-2">
-                  AAPKAPROVIDER
+                  ULTIMATESMM
                 </h3>
                 <p className="text-gray-400 leading-relaxed">
                   India's most trusted SMM panel providing high-quality social media marketing services 
@@ -182,7 +182,7 @@ const Footer = () => {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
             <div className="flex items-center space-x-2 text-gray-400">
-              <span>© 2024 AapkaProvider. Made with</span>
+              <span>© 2024 UltimateSMM. Made with</span>
               <Heart size={16} className="text-red-500" />
               <span>in India. All rights reserved.</span>
             </div>

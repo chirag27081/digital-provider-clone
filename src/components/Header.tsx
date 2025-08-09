@@ -20,8 +20,10 @@ const Header = () => {
       <div className="container mx-auto px-4 py-4">
         <nav className="flex items-center justify-between">
           {/* Logo */}
-          <div className="text-2xl font-bold text-white tracking-wider">
-            ULTIMATESMM.COM
+          <div className="text-2xl font-bold tracking-wider">
+            <a href="https://ultimatesmm.com" target="_blank" rel="noopener noreferrer" className="text-white hover:text-white/90 transition-colors">
+              ULTIMATESMM.COM
+            </a>
           </div>
 
           {/* Desktop Navigation */}

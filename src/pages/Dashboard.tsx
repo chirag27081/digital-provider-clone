@@ -187,7 +187,10 @@ const Dashboard = () => {
             <CardContent>
               <div className="text-center py-8">
                 <p className="text-gray-600 mb-4">Services will be displayed here</p>
-                <Button className="bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+                <Button
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 text-white"
+                  onClick={() => { window.location.href = '/#services'; }}
+                >
                   Browse Services
                 </Button>
               </div>
