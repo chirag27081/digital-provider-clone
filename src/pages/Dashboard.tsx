@@ -6,12 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { LogOut, User as UserIcon, Wallet, ShoppingCart, Settings } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Check if user is logged in
@@ -189,7 +191,7 @@ const Dashboard = () => {
                 <p className="text-gray-600 mb-4">Services will be displayed here</p>
                 <Button
                   className="bg-gradient-to-r from-purple-600 to-pink-600 text-white"
-                  onClick={() => { window.location.href = '/#services'; }}
+                  onClick={() => navigate('/#services')}
                 >
                   Browse Services
                 </Button>
