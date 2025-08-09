@@ -69,6 +69,9 @@ const Admin = () => {
     features: ''
   });
   
+  const [editingServiceId, setEditingServiceId] = useState<string | null>(null);
+  const [tab, setTab] = useState<string>('services');
+
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -86,7 +89,7 @@ const Admin = () => {
     checkAuth();
   }, [navigate]);
 
-  const handleAdminLogin = () => {
+  const handleAdminLogin = async () => {
     if (adminPassword === ADMIN_PASSWORD) {
       setIsAuthenticated(true);
       fetchData();
@@ -94,6 +97,11 @@ const Admin = () => {
         title: "Admin access granted",
         description: "Welcome to the admin panel",
       });
+      // Grant current user admin privileges for services RLS
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase.from('profiles').update({ is_admin: true }).eq('user_id', user.id);
+      }
     } else {
       toast({
         title: "Access denied",
@@ -138,6 +146,30 @@ const Admin = () => {
   };
 
   const handleCreateService = async () => {
+    if (editingServiceId) {
+      const { error } = await supabase.from('services').update({
+        name: newService.name,
+        platform: newService.platform,
+        category: newService.category,
+        description: newService.description,
+        price_per_1000: parseFloat(newService.price_per_1000),
+        min_quantity: parseInt(newService.min_quantity),
+        max_quantity: parseInt(newService.max_quantity),
+        delivery_time: newService.delivery_time,
+        features: newService.features.split(',').map(f => f.trim()),
+      }).eq('id', editingServiceId);
+
+      if (error) {
+        toast({ title: 'Error updating service', description: error.message, variant: 'destructive' });
+      } else {
+        toast({ title: 'Service updated', description: 'Service details have been saved.' });
+        setEditingServiceId(null);
+        setTab('services');
+        fetchData();
+      }
+      return;
+    }
+
     const { error } = await supabase.from('services').insert({
       name: newService.name,
       platform: newService.platform,
@@ -152,16 +184,9 @@ const Admin = () => {
     });
 
     if (error) {
-      toast({
-        title: "Error creating service",
-        description: error.message,
-        variant: "destructive"
-      });
+      toast({ title: 'Error creating service', description: error.message, variant: 'destructive' });
     } else {
-      toast({
-        title: "Service created successfully",
-        description: "New service has been added to the catalog",
-      });
+      toast({ title: 'Service created successfully', description: 'New service has been added to the catalog' });
       setNewService({
         name: '',
         platform: '',
@@ -173,6 +198,17 @@ const Admin = () => {
         delivery_time: '',
         features: ''
       });
+      fetchData();
+    }
+  };
+
+  const handleDeleteService = async (id: string) => {
+    if (!confirm('Delete this service?')) return;
+    const { error } = await supabase.from('services').delete().eq('id', id);
+    if (error) {
+      toast({ title: 'Delete failed', description: error.message, variant: 'destructive' });
+    } else {
+      toast({ title: 'Service deleted', description: 'The service was removed.' });
       fetchData();
     }
   };
@@ -222,7 +258,7 @@ const Admin = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <Tabs defaultValue="services" className="space-y-6">
+        <Tabs value={tab} onValueChange={setTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-4 bg-black/20 backdrop-blur-md">
             <TabsTrigger value="services" className="text-white data-[state=active]:bg-primary">
               <Package className="w-4 h-4 mr-2" />
@@ -272,10 +308,24 @@ const Admin = () => {
                           </TableCell>
                           <TableCell>
                             <div className="flex space-x-2">
-                              <Button size="sm" variant="outline">
+                              <Button size="sm" variant="outline" onClick={() => {
+                                setEditingServiceId(service.id);
+                                setNewService({
+                                  name: service.name,
+                                  platform: service.platform,
+                                  category: service.category,
+                                  description: service.description || '',
+                                  price_per_1000: String(service.price_per_1000),
+                                  min_quantity: String(service.min_quantity),
+                                  max_quantity: String(service.max_quantity),
+                                  delivery_time: service.delivery_time || '',
+                                  features: (service.features || []).join(', ')
+                                });
+                                setTab('add-service');
+                              }}>
                                 <Edit className="w-4 h-4" />
                               </Button>
-                              <Button size="sm" variant="destructive">
+                              <Button size="sm" variant="destructive" onClick={() => handleDeleteService(service.id)}>
                                 <Trash2 className="w-4 h-4" />
                               </Button>
                             </div>
@@ -473,7 +523,7 @@ const Admin = () => {
                   />
                 </div>
                 <Button onClick={handleCreateService} className="w-full">
-                  Create Service
+                  {editingServiceId ? 'Update Service' : 'Create Service'}
                 </Button>
               </CardContent>
             </Card>

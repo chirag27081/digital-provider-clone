@@ -1,14 +1,15 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Instagram, Youtube, Facebook, MessageCircle, Twitter, TrendingUp, Users, Eye, Heart, Share2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 const ServicesSection = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
-  const services = [
+  const defaultServices = [
     {
       icon: Instagram,
       platform: 'Instagram',
@@ -101,6 +102,46 @@ const ServicesSection = () => {
       gradient: 'from-orange-400 to-pink-500'
     }
   ];
+
+  const [dbServices, setDbServices] = useState<any[]>([]);
+
+  useEffect(() => {
+    let isMounted = true;
+    const load = async () => {
+      const { data, error } = await supabase
+        .from('services')
+        .select('*')
+        .eq('status', 'active')
+        .order('created_at', { ascending: false });
+      if (!error && data && isMounted) setDbServices(data);
+    };
+    load();
+    return () => { isMounted = false; };
+  }, []);
+
+  const getIcon = (platform: string) => {
+    switch ((platform || '').toLowerCase()) {
+      case 'instagram': return Instagram;
+      case 'youtube': return Youtube;
+      case 'facebook': return Facebook;
+      case 'telegram': return MessageCircle;
+      case 'twitter': return Twitter;
+      case 'tiktok': return TrendingUp;
+      default: return TrendingUp;
+    }
+  };
+
+  const services = (dbServices.length ? dbServices.map((s: any) => ({
+    icon: getIcon(s.platform),
+    platform: s.platform,
+    title: s.name,
+    description: s.description || '',
+    price: `₹${s.price_per_1000}`,
+    unit: '1000 units',
+    features: Array.isArray(s.features) ? s.features : [],
+    gradient: 'from-primary to-accent',
+    popular: s.status === 'active'
+  })) : defaultServices);
 
   const totalPages = Math.ceil(services.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
