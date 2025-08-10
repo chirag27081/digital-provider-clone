@@ -100,7 +100,7 @@ const Admin = () => {
       // Grant current user admin privileges for services RLS
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        await supabase.from('profiles').update({ is_admin: true }).eq('user_id', user.id);
+        await supabase.from('profiles').update({ is_admin: true } as any).eq('user_id', user.id);
       }
     } else {
       toast({
