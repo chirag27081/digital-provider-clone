@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Menu, X, User, Package, Users, Zap, FileText, Mail } from 'lucide-react';
 
@@ -29,14 +30,25 @@ const Header = () => {
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-6">
             {navItems.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className="flex items-center space-x-2 text-white/90 hover:text-white transition-colors duration-200 px-3 py-2 rounded-lg hover:bg-white/10"
-              >
-                <item.icon size={16} />
-                <span className="text-sm font-medium">{item.name}</span>
-              </a>
+              item.href.startsWith('/') ? (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className="flex items-center space-x-2 text-white/90 hover:text-white transition-colors duration-200 px-3 py-2 rounded-lg hover:bg-white/10"
+                >
+                  <item.icon size={16} />
+                  <span className="text-sm font-medium">{item.name}</span>
+                </Link>
+              ) : (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  className="flex items-center space-x-2 text-white/90 hover:text-white transition-colors duration-200 px-3 py-2 rounded-lg hover:bg-white/10"
+                >
+                  <item.icon size={16} />
+                  <span className="text-sm font-medium">{item.name}</span>
+                </a>
+              )
             ))}
           </div>
 
@@ -56,15 +68,27 @@ const Header = () => {
           <div className="lg:hidden mt-4 pb-4 border-t border-white/10">
             <div className="flex flex-col space-y-2 pt-4">
               {navItems.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className="flex items-center space-x-3 text-white/90 hover:text-white transition-colors duration-200 px-3 py-3 rounded-lg hover:bg-white/10"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <item.icon size={18} />
-                  <span className="font-medium">{item.name}</span>
-                </a>
+                item.href.startsWith('/') ? (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className="flex items-center space-x-3 text-white/90 hover:text-white transition-colors duration-200 px-3 py-3 rounded-lg hover:bg-white/10"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <item.icon size={18} />
+                    <span className="font-medium">{item.name}</span>
+                  </Link>
+                ) : (
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    className="flex items-center space-x-3 text-white/90 hover:text-white transition-colors duration-200 px-3 py-3 rounded-lg hover:bg-white/10"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <item.icon size={18} />
+                    <span className="font-medium">{item.name}</span>
+                  </a>
+                )
               ))}
             </div>
           </div>

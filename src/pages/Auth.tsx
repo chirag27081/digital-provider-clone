@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -30,12 +31,14 @@ const AuthPage = () => {
     acceptTerms: false
   });
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     // Check if user is already logged in
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
-        window.location.href = '/dashboard';
+        navigate('/dashboard');
       }
     };
     checkUser();
@@ -59,7 +62,7 @@ const AuthPage = () => {
       });
 
       // Redirect to dashboard
-      window.location.href = '/dashboard';
+      navigate('/dashboard');
     } catch (error: any) {
       toast({
         title: "Login Failed",
