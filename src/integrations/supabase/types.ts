@@ -14,6 +14,72 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_audit_log: {
+        Row: {
+          action: string
+          admin_user_id: string
+          created_at: string
+          details: Json | null
+          id: string
+          ip_address: unknown | null
+          resource_id: string | null
+          resource_type: string
+          user_agent: string | null
+        }
+        Insert: {
+          action: string
+          admin_user_id: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: unknown | null
+          resource_id?: string | null
+          resource_type: string
+          user_agent?: string | null
+        }
+        Update: {
+          action?: string
+          admin_user_id?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: unknown | null
+          resource_id?: string | null
+          resource_type?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
+      admin_invitations: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          email: string
+          expires_at: string
+          id: string
+          token: string
+          used_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          email: string
+          expires_at: string
+          id?: string
+          token: string
+          used_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          email?: string
+          expires_at?: string
+          id?: string
+          token?: string
+          used_at?: string | null
+        }
+        Relationships: []
+      }
       orders: {
         Row: {
           completed_count: number | null
@@ -66,6 +132,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          admin_created_at: string | null
           balance: number | null
           created_at: string
           email: string | null
@@ -79,6 +146,7 @@ export type Database = {
           username: string | null
         }
         Insert: {
+          admin_created_at?: string | null
           balance?: number | null
           created_at?: string
           email?: string | null
@@ -92,6 +160,7 @@ export type Database = {
           username?: string | null
         }
         Update: {
+          admin_created_at?: string | null
           balance?: number | null
           created_at?: string
           email?: string | null
@@ -159,7 +228,23 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_admin: {
+        Args: { user_id: string }
+        Returns: boolean
+      }
+      log_admin_action: {
+        Args: {
+          action_name: string
+          resource_type: string
+          resource_id?: string
+          details?: Json
+        }
+        Returns: undefined
+      }
+      validate_url: {
+        Args: { url: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
