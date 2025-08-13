@@ -228,6 +228,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_admin_invitation: {
+        Args: { invitation_token: string }
+        Returns: boolean
+      }
+      create_admin_invitation: {
+        Args: { invitation_email: string }
+        Returns: string
+      }
       is_admin: {
         Args: { user_id: string }
         Returns: boolean

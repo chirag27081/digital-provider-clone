@@ -9,8 +9,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { PlusCircle, Users, Package, ShoppingCart, LogOut, Edit, Trash2 } from 'lucide-react';
+import { PlusCircle, Users, Package, ShoppingCart, LogOut, Edit, Trash2, Shield } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import AdminCheck from '@/components/AdminCheck';
+import AdminInvitation from '@/components/AdminInvitation';
 
 interface Service {
   id: string;
@@ -52,7 +54,6 @@ interface Order {
 
 const Admin = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [adminPassword, setAdminPassword] = useState('');
   const [services, setServices] = useState<Service[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -75,40 +76,13 @@ const Admin = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const ADMIN_PASSWORD = 'admin123'; // In production, use proper authentication
-
-  useEffect(() => {
-    // Check if user is logged in as admin
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate('/auth');
-        return;
-      }
-    };
-    checkAuth();
-  }, [navigate]);
-
-  const handleAdminLogin = async () => {
-    if (adminPassword === ADMIN_PASSWORD) {
-      setIsAuthenticated(true);
-      fetchData();
-      toast({
-        title: "Admin access granted",
-        description: "Welcome to the admin panel",
-      });
-      // Grant current user admin privileges for services RLS
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        await supabase.from('profiles').update({ is_admin: true } as any).eq('user_id', user.id);
-      }
-    } else {
-      toast({
-        title: "Access denied",
-        description: "Invalid admin password",
-        variant: "destructive"
-      });
-    }
+  const handleAdminVerified = () => {
+    setIsAuthenticated(true);
+    fetchData();
+    toast({
+      title: "Admin access granted",
+      description: "Welcome to the secure admin panel",
+    });
   };
 
   const fetchData = async () => {
@@ -162,6 +136,14 @@ const Admin = () => {
       if (error) {
         toast({ title: 'Error updating service', description: error.message, variant: 'destructive' });
       } else {
+        // Log admin action
+        await supabase.rpc('log_admin_action', {
+          action_name: 'update_service',
+          resource_type: 'service',
+          resource_id: editingServiceId,
+          details: { name: newService.name, platform: newService.platform }
+        });
+        
         toast({ title: 'Service updated', description: 'Service details have been saved.' });
         setEditingServiceId(null);
         setTab('services');
@@ -170,7 +152,7 @@ const Admin = () => {
       return;
     }
 
-    const { error } = await supabase.from('services').insert({
+    const { data, error } = await supabase.from('services').insert({
       name: newService.name,
       platform: newService.platform,
       category: newService.category,
@@ -181,11 +163,19 @@ const Admin = () => {
       delivery_time: newService.delivery_time,
       features: newService.features.split(',').map(f => f.trim()),
       status: 'active'
-    });
+    }).select().single();
 
     if (error) {
       toast({ title: 'Error creating service', description: error.message, variant: 'destructive' });
     } else {
+      // Log admin action
+      await supabase.rpc('log_admin_action', {
+        action_name: 'create_service',
+        resource_type: 'service',
+        resource_id: data.id,
+        details: { name: newService.name, platform: newService.platform }
+      });
+      
       toast({ title: 'Service created successfully', description: 'New service has been added to the catalog' });
       setNewService({
         name: '',
@@ -208,6 +198,13 @@ const Admin = () => {
     if (error) {
       toast({ title: 'Delete failed', description: error.message, variant: 'destructive' });
     } else {
+      // Log admin action
+      await supabase.rpc('log_admin_action', {
+        action_name: 'delete_service',
+        resource_type: 'service',
+        resource_id: id
+      });
+      
       toast({ title: 'Service deleted', description: 'The service was removed.' });
       fetchData();
     }
@@ -219,30 +216,7 @@ const Admin = () => {
   };
 
   if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle className="text-center">Admin Access</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="password">Admin Password</Label>
-              <Input
-                id="password"
-                type="password"
-                value={adminPassword}
-                onChange={(e) => setAdminPassword(e.target.value)}
-                placeholder="Enter admin password"
-              />
-            </div>
-            <Button onClick={handleAdminLogin} className="w-full">
-              Access Admin Panel
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
+    return <AdminCheck onAdminVerified={handleAdminVerified} />;
   }
 
   return (
@@ -259,7 +233,7 @@ const Admin = () => {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs value={tab} onValueChange={setTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 bg-black/20 backdrop-blur-md">
+          <TabsList className="grid w-full grid-cols-5 bg-black/20 backdrop-blur-md">
             <TabsTrigger value="services" className="text-white data-[state=active]:bg-primary">
               <Package className="w-4 h-4 mr-2" />
               Services
@@ -275,6 +249,10 @@ const Admin = () => {
             <TabsTrigger value="add-service" className="text-white data-[state=active]:bg-primary">
               <PlusCircle className="w-4 h-4 mr-2" />
               Add Service
+            </TabsTrigger>
+            <TabsTrigger value="admin" className="text-white data-[state=active]:bg-primary">
+              <Shield className="w-4 h-4 mr-2" />
+              Admin
             </TabsTrigger>
           </TabsList>
 
@@ -528,6 +506,38 @@ const Admin = () => {
               </CardContent>
             </Card>
           </TabsContent>
+
+          <TabsContent value="admin">
+            <div className="space-y-6">
+              <AdminInvitation onInvitationSent={fetchData} />
+              
+              <Card className="bg-black/20 backdrop-blur-md border-white/10">
+                <CardHeader>
+                  <CardTitle className="text-white">Security Features</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="text-gray-300">
+                    <h4 className="font-semibold mb-2">✅ Implemented Security Features:</h4>
+                    <ul className="list-disc list-inside space-y-1 text-sm">
+                      <li>Secure admin invitation system</li>
+                      <li>Role-based access control (RLS)</li>
+                      <li>URL validation for orders</li>
+                      <li>Admin action audit logging</li>
+                      <li>Secure database functions</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="text-yellow-300">
+                    <h4 className="font-semibold mb-2">⚠️ Manual Configuration Required:</h4>
+                    <p className="text-sm">
+                      Please enable leaked password protection in your Supabase Auth settings for enhanced security.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
         </Tabs>
       </main>
     </div>

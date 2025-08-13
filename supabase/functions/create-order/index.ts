@@ -32,14 +32,10 @@ serve(async (req) => {
       );
     }
 
-    // Set the auth token
-    supabaseClient.auth.setSession({
-      access_token: authHeader.replace('Bearer ', ''),
-      refresh_token: ''
-    });
+    // Get user from JWT token
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token);
 
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
-    
     if (userError || !user) {
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
@@ -78,6 +74,17 @@ serve(async (req) => {
         JSON.stringify({ 
           error: `Quantity must be between ${service.min_quantity} and ${service.max_quantity}` 
         }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Validate target URL using database function
+    const { data: isValidUrl, error: urlError } = await supabaseClient
+      .rpc('validate_url', { url: target_url });
+    
+    if (urlError || !isValidUrl) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid target URL provided' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }

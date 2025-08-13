@@ -26,13 +26,9 @@ serve(async (req) => {
       );
     }
 
-    // Set the auth token
-    supabaseClient.auth.setSession({
-      access_token: authHeader.replace('Bearer ', ''),
-      refresh_token: ''
-    });
-
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+    // Get user from JWT token
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token);
     
     if (userError || !user) {
       return new Response(
